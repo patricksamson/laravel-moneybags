@@ -21,8 +21,10 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.17",
+        "infection/infection": "^0.25.0",
         "orchestra/testbench": "^6.22",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "vimeo/psalm": "^4.3"
     },
     "autoload": {
         "psr-4": {
@@ -39,7 +41,9 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": false
+            "pestphp/pest-plugin": false,
+            "composer/package-versions-deprecated": true,
+            "infection/extension-installer": true
         }
     },
     "extra": {
