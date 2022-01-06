@@ -11,7 +11,7 @@ class MoneyTest extends TestCase
 
     public function setUp(): void
     {
-        $this->faker  = \Faker\Factory::create();
+        $this->faker = \Faker\Factory::create();
     }
 
     /**
