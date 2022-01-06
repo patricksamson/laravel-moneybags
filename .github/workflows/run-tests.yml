@@ -104,5 +104,7 @@ jobs:
       - name: Download dependencies
         run: composer install --classmap-authoritative
 
-      - name: Roave Infection test
-        run: vendor/bin/roave-infection-static-analysis-plugin
+      - name: Infection
+        run: vendor/bin/infection \
+          --threads=4 \
+          --logger-github
