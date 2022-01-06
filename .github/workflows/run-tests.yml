@@ -80,6 +80,7 @@ jobs:
   mutation-tests:
     name: Infection
     runs-on: ubuntu-latest
+    continue-on-error: true
 
     steps:
       - name: Checkout code
