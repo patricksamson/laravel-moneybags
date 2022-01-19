@@ -251,7 +251,7 @@ class MoneyTest extends TestCase
         $operand = new Money($operandAmount);
 
         $this->assertEquals($expectEquals, $money->isEqualTo($operand));
-        $this->assertEquals(!$expectEquals, $money->isNotEqualTo($operand));
+        $this->assertEquals(! $expectEquals, $money->isNotEqualTo($operand));
 
         if ($expectEquals) {
             // TODO greaterThan / lessThan
@@ -272,7 +272,6 @@ class MoneyTest extends TestCase
             [1234, '-1234', false],
         ];
     }
-
 
     /**
      * @test
