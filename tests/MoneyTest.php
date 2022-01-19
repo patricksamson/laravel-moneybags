@@ -241,6 +241,41 @@ class MoneyTest extends TestCase
 
     /**
      * @test
+     * @dataProvider providesEqualityComparisonScenarios
+     *
+     * @param mixed $expected
+     */
+    public function testEqualityComparison(int|string $amount, int|string $operandAmount, bool $expectEquals)
+    {
+        $money = new Money($amount);
+        $operand = new Money($operandAmount);
+
+        $this->assertEquals($expectEquals, $money->isEqualTo($operand));
+        $this->assertEquals(!$expectEquals, $money->isNotEqualTo($operand));
+
+        if ($expectEquals) {
+            // TODO greaterThan / lessThan
+        }
+    }
+
+    public function providesEqualityComparisonScenarios()
+    {
+        return [
+            [0, 0, true],
+            [0, '0', true],
+            [1234, 1234, true],
+            [1234, '1234', true],
+            [-1234, -1234, true],
+            [-1234, '-1234', true],
+
+            [1234, -1234, false],
+            [1234, '-1234', false],
+        ];
+    }
+
+
+    /**
+     * @test
      */
     public function testClone()
     {
