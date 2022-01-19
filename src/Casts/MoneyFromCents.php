@@ -13,9 +13,9 @@ class MoneyFromCents implements CastsAttributes
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return \PatrickSamson\LaravelMoneybags\Money
+     * @param  mixed   $value
+     * @param  array   $attributes
+     * @return \PatrickSamson\LaravelMoneybags\Money|null
      */
     public function get($model, $key, $value, $attributes)
     {
@@ -27,9 +27,9 @@ class MoneyFromCents implements CastsAttributes
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $key
-     * @param  \PatrickSamson\LaravelMoneybags\Money  $value
-     * @param  array  $attributes
-     * @return array
+     * @param  mixed   $value
+     * @param  array   $attributes
+     * @return mixed
      */
     public function set($model, $key, $value, $attributes)
     {
