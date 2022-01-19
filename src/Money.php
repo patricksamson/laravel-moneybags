@@ -102,6 +102,16 @@ class Money
         return bccomp($this->amount, 0) < 0;
     }
 
+    public function isEqualTo(Money $operand)
+    {
+        return $this->amount === $operand->amount;
+    }
+
+    public function isNotEqualTo(Money $operand)
+    {
+        return $this->amount !== $operand->amount;
+    }
+
     public function clone(): self
     {
         return clone $this;
