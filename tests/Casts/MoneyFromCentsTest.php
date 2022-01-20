@@ -2,10 +2,12 @@
 
 namespace PatrickSamson\LaravelMoneybags\Tests;
 
+use InvalidArgumentException;
 use PatrickSamson\LaravelMoneybags\Casts\MoneyFromCents;
 use PatrickSamson\LaravelMoneybags\Money;
 use PatrickSamson\LaravelMoneybags\Tests\Concerns\AssertsMoney;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class MoneyFromCentsTest extends TestCase
 {
@@ -50,5 +52,17 @@ class MoneyFromCentsTest extends TestCase
 
         $raw = $cast->set(null, null, $attribute, []);
         $this->assertNull($raw);
+    }
+
+    /**
+     * @test
+     */
+    public function testRejectsOtherObjects()
+    {
+        $cast = new MoneyFromCents();
+        $raw = new stdClass();
+
+        $this->expectException(InvalidArgumentException::class);
+        $cast->set(null, null, $raw, []);
     }
 }
