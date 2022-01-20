@@ -281,7 +281,7 @@ class MoneyTest extends TestCase
      *
      * @param mixed $expected
      */
-    public function testEqualityComparison(int|string $amount, int|string $operandAmount, bool $expectEquals)
+    public function testEqualityComparison(int|float|string $amount, int|float|string $operandAmount, bool $expectEquals)
     {
         $money = new Money($amount);
         $operand = new Money($operandAmount);
@@ -297,15 +297,36 @@ class MoneyTest extends TestCase
     public function providesEqualityComparisonScenarios()
     {
         return [
-            [0, 0, true],
-            [0, '0', true],
+            // Type checks
             [1234, 1234, true],
-            [1234, '1234', true],
             [-1234, -1234, true],
+            [1234, 1234.00, true],
+            [-1234, -1234.00, true],
+            [1234, '1234', true],
             [-1234, '-1234', true],
+            [1234, '1234.00', true],
+            [-1234, '-1234.00', true],
 
+            // Different signs are not equal
             [1234, -1234, false],
             [1234, '-1234', false],
+
+            // Zero edge cases
+            [0, 0, true],
+            [0, 0.00, true],
+            [0, '0', true],
+            [0, '0.00', true],
+            [0, -0, true],
+            [0, -0.00, true],
+            [0, '-0', true],
+            [0, '-0.00', true],
+            [0, PHP_FLOAT_MIN, true],
+            [0, -PHP_FLOAT_MIN, true],
+
+            // Direct string comparison
+            ['0', '0', true],
+            ['0', '0.00', true],
+            ['0', '-0.00', true],
         ];
     }
 
