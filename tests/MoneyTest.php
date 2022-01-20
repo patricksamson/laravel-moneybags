@@ -218,7 +218,7 @@ class MoneyTest extends TestCase
      *
      * @param mixed $expected
      */
-    public function testHasComputedAttributes(int|string $amount, string $attribute, $expected)
+    public function testHasComputedAttributes(int|float|string $amount, string $attribute, $expected)
     {
         $money = new Money($amount);
         $this->assertEquals($expected, $money->$attribute());
