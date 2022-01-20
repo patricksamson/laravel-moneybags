@@ -34,6 +34,10 @@ class Money
 
     public static function fromDollars(int|float|string $amount): self
     {
+        if (is_float($amount)) {
+            // Correctly parse floats containing exponential numbers.
+            $amount = number_format($amount, 4, '.', '');
+        }
         return new self(bcmul((string) $amount, 100));
     }
 

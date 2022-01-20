@@ -69,6 +69,10 @@ class MoneyTest extends TestCase
             [0, '0.00'],
             [0, '-0.00'],
             [12345, '12345.67'],
+
+            // Precision (truncated to `int`)
+            [12, 12.345678901234567890],
+            [12, '12.345678901234567890'],
         ];
     }
 
@@ -105,6 +109,10 @@ class MoneyTest extends TestCase
             [0, '0.00'],
             [0, '-0.00'],
             [12345, '12345.67'],
+
+            // Precision (truncated to `int`)
+            [12, 12.345678901234567890],
+            [12, '12.345678901234567890'],
         ];
     }
 
@@ -141,6 +149,12 @@ class MoneyTest extends TestCase
             [0, '0.00'],
             [0, '-0.00'],
             [1234567, '12345.67'],
+
+            // Precision (truncated to `int`)
+            [1234, 12.345678901234567890],
+            [1234, '12.345678901234567890'],
+            [PHP_INT_MAX, PHP_INT_MAX],
+            //[1234, PHP_FLOAT_MAX], // TODO inCents() casts to int...
         ];
     }
 
