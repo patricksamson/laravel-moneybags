@@ -73,6 +73,7 @@ class Money
     public function multiplyBy(string $multiplier, bool $round = true): self
     {
         $result = bcmul($this->amount, $multiplier, self::DEFAULT_SCALE);
+
         return $this->newInstance($round ? $this->bcRound($result) : $result);
     }
 
