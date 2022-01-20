@@ -297,6 +297,9 @@ class MoneyTest extends TestCase
 
         $this->assertEquals(123, $original->inCents());
         $this->assertEquals(123, $clone->inCents());
+
+        $original->multiplyBy(2);
+        $this->assertEquals(123, $clone->inCents());
     }
 
     /**
