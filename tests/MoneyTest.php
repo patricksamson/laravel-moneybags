@@ -214,62 +214,62 @@ class MoneyTest extends TestCase
 
     /**
      * @test
-     * @dataProvider providesComputedAttributeScenarios
-     *
-     * @param mixed $expected
+     * @dataProvider providesIsZeroScenarios
      */
-    public function testHasComputedAttributes(int|float|string $amount, string $attribute, $expected)
+    public function testIsZeroAndNonZero(int|float|string $amount, bool $expectedIsZero)
     {
         $money = new Money($amount);
-        $this->assertEquals($expected, $money->$attribute());
+        $this->assertEquals($expectedIsZero, $money->isZero());
+        $this->assertEquals(!$expectedIsZero, $money->isNonZero());
     }
 
-    public function providesComputedAttributeScenarios()
+    public function providesIsZeroScenarios()
     {
         return [
-            '0 is zero' => [0, 'isZero', true],
-            '1 is not zero' => [1, 'isZero', false],
-            '-1 is not zero' => [-1, 'isZero', false],
-            '0.00000 is zero' => [0.00000, 'isZero', true],
-            '0.00001 is not zero' => [0.00001, 'isZero', false],
-            '-0.0001 is not zero' => [-0.00001, 'isZero', false],
-            '"0" is zero' => ['0', 'isZero', true],
-            '"0.00" is zero' => ['0.00', 'isZero', true],
-            '"-0" is zero' => ['-0', 'isZero', true],
-            '"-0.00" is zero' => ['-0.00', 'isZero', true],
-            'Max float is not zero' => [PHP_FLOAT_MAX, 'isZero', false],
+            '0 is zero' => [0, true],
+            '1 is not zero' => [1, false],
+            '-1 is not zero' => [-1, false],
+            '0.00000 is zero' => [0.00000, true],
+            '0.00001 is not zero' => [0.00001, false],
+            '-0.0001 is not zero' => [-0.00001, false],
+            '"0" is zero' => ['0', true],
+            '"0.00" is zero' => ['0.00', true],
+            '"-0" is zero' => ['-0', true],
+            '"-0.00" is zero' => ['-0.00', true],
+            'Max float is not zero' => [PHP_FLOAT_MAX, false],
             // Technically not zero, but smaller than our scale : 2.2250738585072014E-308
-            'Min float is not zero' => [PHP_FLOAT_MIN, 'isZero', true],
+            'Min float is not zero' => [PHP_FLOAT_MIN, true],
+        ];
+    }
 
-            '-1 is non-zero' => [-1, 'isNonZero', true],
-            '1 is non-zero' => [1, 'isNonZero', true],
-            '0 is not non-zero' => [0, 'isNonZero', false],
-            '0.00000 is not non-zero' => [0.00000, 'isNonZero', false],
-            '0.00001 is non-zero' => [0.00001, 'isNonZero', true],
-            '-0.0001 is non-zero' => [-0.00001, 'isNonZero', true],
-            '"0" is not non-zero' => ['0', 'isNonZero', false],
-            '"0.00" is not non-zero' => ['0.00', 'isNonZero', false],
-            '"-0" is not non-zero' => ['-0', 'isNonZero', false],
-            '"-0.00" is not non-zero' => ['-0.00', 'isNonZero', false],
-            'Max float is not non-zero' => [PHP_FLOAT_MAX, 'isNonZero', true],
-            // Technically not zero, but smaller than our scale : 2.2250738585072014E-308
-            'Min float is not non-zero' => [PHP_FLOAT_MIN, 'isNonZero', false],
+    /**
+     * @test
+     * @dataProvider providesIsPositiveScenarios
+     */
+    public function testIsPositive(int|float|string $amount, bool $expectedIsPositive)
+    {
+        $money = new Money($amount);
+        $this->assertEquals($expectedIsPositive, $money->isPositive());
+        $this->assertEquals(! $expectedIsPositive, $money->isNegative());
+    }
 
-            '1 is positive' => [1, 'isPositive', true],
-            '-1 is not positive' => [-1, 'isPositive', false],
-            '0 is positive' => [0, 'isPositive', true],
-            'Max int is positive' => [PHP_INT_MAX, 'isPositive', true],
-            'Min int is not positive' => [PHP_INT_MIN, 'isPositive', false],
-            'Max float is positive' => [PHP_FLOAT_MAX, 'isPositive', true],
-            'Min float is not positive' => [-PHP_FLOAT_MAX, 'isPositive', false],
-
-            '-1 is negative' => [-1, 'isNegative', true],
-            '1 is not negative' => [1, 'isNegative', false],
-            '0 is not negative' => [0, 'isNegative', false],
-            'Max int is not negative' => [PHP_INT_MAX, 'isNegative', false],
-            'Min int is negative' => [PHP_INT_MIN, 'isNegative', true],
-            'Max float is not negative' => [PHP_FLOAT_MAX, 'isNegative', false],
-            'Min float is negative' => [-PHP_FLOAT_MAX, 'isNegative', true],
+    public function providesIsPositiveScenarios()
+    {
+        return [
+            '1 is positive' => [1, true],
+            '-1 is not positive' => [-1, false],
+            '0 is positive' => [0, true],
+            '0.00000 is positive' => [0.00000, true],
+            '0.00001 is positive' => [0.00001, true],
+            '-0.0001 is not positive' => [-0.00001, false],
+            '"0" is positive' => ['0', true],
+            '"0.00" is positive' => ['0.00', true],
+            '"-0" is positive' => ['-0', true],
+            '"-0.00" is positive' => ['-0.00', true],
+            'Max int is positive' => [PHP_INT_MAX, true],
+            'Min int is not positive' => [PHP_INT_MIN, false],
+            'Max float is positive' => [PHP_FLOAT_MAX, true],
+            'Min float is not positive' => [-PHP_FLOAT_MAX, false],
         ];
     }
 
