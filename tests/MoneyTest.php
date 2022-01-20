@@ -352,7 +352,7 @@ class MoneyTest extends TestCase
 
         yield 'Division' => [
             'divideByMoney',
-            fn ($a, $b) => (int) floor($a / $b),
+            fn ($a, $b) => (int) round($a / $b),
         ];
     }
 
