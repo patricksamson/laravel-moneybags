@@ -57,12 +57,12 @@ class Money
 
     public function add(Money $operand): self
     {
-        return $this->newInstance(bcadd($this->amount, $operand->amount));
+        return $this->newInstance(bcadd($this->amount, $operand->amount, self::DEFAULT_SCALE));
     }
 
     public function subtract(Money $operand): self
     {
-        return $this->newInstance(bcsub($this->amount, $operand->amount));
+        return $this->newInstance(bcsub($this->amount, $operand->amount, self::DEFAULT_SCALE));
     }
 
     public function multiplyByMoney(Money $operand, bool $round = true): self
