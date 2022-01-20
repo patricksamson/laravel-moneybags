@@ -246,10 +246,18 @@ class MoneyTest extends TestCase
             '1 is positive' => [1, 'isPositive', true],
             '-1 is not positive' => [-1, 'isPositive', false],
             '0 is positive' => [0, 'isPositive', true],
+            'Max int is positive' => [PHP_INT_MAX, 'isPositive', true],
+            'Min int is not positive' => [PHP_INT_MIN, 'isPositive', false],
+            'Max float is positive' => [PHP_FLOAT_MAX, 'isPositive', true],
+            'Min float is not positive' => [PHP_FLOAT_MIN, 'isPositive', false],
 
             '-1 is negative' => [-1, 'isNegative', true],
             '1 is not negative' => [1, 'isNegative', false],
             '0 is not negative' => [0, 'isNegative', false],
+            'Max int is not negative' => [PHP_INT_MAX, 'isNegative', false],
+            'Min int is negative' => [PHP_INT_MIN, 'isNegative', true],
+            'Max float is not negative' => [PHP_FLOAT_MAX, 'isNegative', false],
+            'Min float is negative' => [PHP_FLOAT_MIN, 'isNegative', true],
         ];
     }
 
@@ -346,5 +354,11 @@ class MoneyTest extends TestCase
             'divideByMoney',
             fn ($a, $b) => (int) floor($a / $b),
         ];
+    }
+
+    public function testMultiplyByPrecision()
+    {
+        $money = new Money(100);
+        $this->assertEquals(115, $money->multiplyBy('1.14975')->inCents());
     }
 }
