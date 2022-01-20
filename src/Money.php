@@ -4,6 +4,11 @@ namespace PatrickSamson\LaravelMoneybags;
 
 class Money
 {
+    public const DEFAULT_SCALE = 4;
+
+    /**
+     * The amount, in cents.
+     */
     private string $amount;
 
     public function __construct(int|float|string $amount = 0)
@@ -36,7 +41,7 @@ class Money
     {
         if (is_float($amount)) {
             // Correctly parse floats containing exponential numbers.
-            $amount = number_format($amount, 4, '.', '');
+            $amount = number_format($amount, self::DEFAULT_SCALE, '.', '');
         }
         return new self(bcmul((string) $amount, 100));
     }
@@ -63,7 +68,7 @@ class Money
 
     public function multiplyBy(string $multiplier): self
     {
-        return $this->newInstance(bcmul($this->amount, $multiplier));
+        return $this->newInstance(bcmul($this->amount, $multiplier, self::DEFAULT_SCALE));
     }
 
     public function divideByMoney(Money $operand): self
