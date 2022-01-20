@@ -65,9 +65,10 @@ class Money
         return $this->newInstance(bcsub($this->amount, $operand->amount));
     }
 
-    public function multiplyByMoney(Money $operand): self
+    public function multiplyByMoney(Money $operand, bool $round = true): self
     {
-        return $this->newInstance(bcmul($this->amount, $operand->amount));
+        $result = bcmul($this->amount, $operand->amount, self::DEFAULT_SCALE);
+        return $this->newInstance($round ? $this->bcRound($result) : $result);
     }
 
     public function multiplyBy(string $multiplier, bool $round = true): self
@@ -76,14 +77,16 @@ class Money
         return $this->newInstance($round ? $this->bcRound($result) : $result);
     }
 
-    public function divideByMoney(Money $operand): self
+    public function divideByMoney(Money $operand, bool $round = true): self
     {
-        return $this->newInstance(bcdiv($this->amount, $operand->amount));
+        $result = bcdiv($this->amount, $operand->amount, self::DEFAULT_SCALE);
+        return $this->newInstance($round ? $this->bcRound($result) : $result);
     }
 
-    public function divideBy(string $divisor): self
+    public function divideBy(string $divisor, bool $round = true): self
     {
-        return $this->newInstance(bcdiv($this->amount, $divisor));
+        $result = bcdiv($this->amount, $divisor, self::DEFAULT_SCALE);
+        return $this->newInstance($round ? $this->bcRound($result) : $result);
     }
 
     public function absolute(): self
