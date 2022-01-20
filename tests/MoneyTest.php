@@ -239,6 +239,9 @@ class MoneyTest extends TestCase
             'Max float is not zero' => [PHP_FLOAT_MAX, false],
             // Technically not zero, but smaller than our scale : 2.2250738585072014E-308
             'Near-zero float is zero' => [PHP_FLOAT_MIN, true],
+            'Near-zero negative float is zero' => [PHP_FLOAT_MIN, true],
+            'Near-zero string is zero' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
+            'Near-zero negative string is zero' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
         ];
     }
 
@@ -272,6 +275,8 @@ class MoneyTest extends TestCase
             'Min float is not positive' => [-PHP_FLOAT_MAX, false],
             'Near-zero positive float is positive' => [PHP_FLOAT_MIN, true],
             'Near-zero negative float is positive' => [-PHP_FLOAT_MIN, true],
+            'Near-zero string is positive' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
+            'Near-zero negative string is positive' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
         ];
     }
 
@@ -322,6 +327,8 @@ class MoneyTest extends TestCase
             [0, '-0.00', true],
             [0, PHP_FLOAT_MIN, true],
             [0, -PHP_FLOAT_MIN, true],
+            [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
+            [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
 
             // Direct string comparison
             ['0', '0', true],
