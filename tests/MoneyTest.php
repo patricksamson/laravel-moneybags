@@ -220,7 +220,7 @@ class MoneyTest extends TestCase
     {
         $money = new Money($amount);
         $this->assertEquals($expectedIsZero, $money->isZero());
-        $this->assertEquals(!$expectedIsZero, $money->isNonZero());
+        $this->assertEquals(! $expectedIsZero, $money->isNonZero());
     }
 
     public function providesIsZeroScenarios()
