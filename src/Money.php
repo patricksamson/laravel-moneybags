@@ -68,6 +68,7 @@ class Money
     public function multiplyByMoney(Money $operand, bool $round = true): self
     {
         $result = bcmul($this->amount, $operand->amount, self::DEFAULT_SCALE);
+
         return $this->newInstance($round ? $this->bcRound($result) : $result);
     }
 
@@ -81,12 +82,14 @@ class Money
     public function divideByMoney(Money $operand, bool $round = true): self
     {
         $result = bcdiv($this->amount, $operand->amount, self::DEFAULT_SCALE);
+
         return $this->newInstance($round ? $this->bcRound($result) : $result);
     }
 
     public function divideBy(string $divisor, bool $round = true): self
     {
         $result = bcdiv($this->amount, $divisor, self::DEFAULT_SCALE);
+
         return $this->newInstance($round ? $this->bcRound($result) : $result);
     }
 
