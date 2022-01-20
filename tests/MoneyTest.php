@@ -160,6 +160,59 @@ class MoneyTest extends TestCase
 
     /**
      * @test
+     * @dataProvider providesAdditionScenarios
+     */
+    public function testAdd(int|float|string $amount, int|float|string $operand, int $expected)
+    {
+        $money = new Money($amount);
+        $operandMoney = new Money($operand);
+
+        $this->assertEquals($expected, $money->add($operandMoney)->inCents());
+    }
+
+    public function providesAdditionScenarios()
+    {
+        return [
+            [0, 0, 0],
+            [1, -1, 0],
+            [-1, -1, -2],
+            [PHP_INT_MAX, PHP_INT_MIN, -1],
+            [PHP_FLOAT_MAX, -PHP_FLOAT_MAX, 0],
+            [PHP_FLOAT_MIN, PHP_FLOAT_MIN, 0],
+            [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
+            [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider providesSubscractionScenarios
+     */
+    public function testSubtract(int|float|string $amount, int|float|string $operand, int $expected)
+    {
+        $money = new Money($amount);
+        $operandMoney = new Money($operand);
+
+        $this->assertEquals($expected, $money->subtract($operandMoney)->inCents());
+    }
+
+    public function providesSubscractionScenarios()
+    {
+        return [
+            [0, 0, 0],
+            [1, 1, 0],
+            [1, -1, 2],
+            [-1, -1, 0],
+            [PHP_INT_MAX, -PHP_INT_MIN, -1],
+            [PHP_FLOAT_MAX, PHP_FLOAT_MAX, 0],
+            [PHP_FLOAT_MIN, PHP_FLOAT_MIN, 0],
+            [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
+            [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+        ];
+    }
+
+    /**
+     * @test
      * @dataProvider providesAbsoluteScenarios
      */
     public function testAbsolute(int $expected, $amount)
