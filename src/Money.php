@@ -38,6 +38,7 @@ class Money
             // Correctly parse floats containing exponential numbers.
             $amount = number_format($amount, 4, '.', '');
         }
+
         return new self(bcmul((string) $amount, 100));
     }
 
