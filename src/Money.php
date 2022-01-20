@@ -128,8 +128,10 @@ class Money
             if ($this->amount[0] != '-') {
                 return $this->newInstance(bcadd($this->amount, '0.' . str_repeat('0', $precision) . '5', $precision));
             }
+
             return $this->newInstance(bcsub($this->amount, '0.' . str_repeat('0', $precision) . '5', $precision));
         }
+
         return $this->newInstance($this->amount);
     }
 
