@@ -214,27 +214,27 @@ class MoneyTest extends TestCase
     {
         return [
             '0 is zero' => [0, 'isZero', true],
-            '10 is not zero' => [10, 'isZero', false],
-            '-10 is not zero' => [-10, 'isZero', false],
+            '1 is not zero' => [1, 'isZero', false],
+            '-1 is not zero' => [-1, 'isZero', false],
             '"0" is zero' => ['0', 'isZero', true],
             '"0.00" is zero' => ['0.00', 'isZero', true],
             '"-0" is zero' => ['-0', 'isZero', true],
             '"-0.00" is zero' => ['-0.00', 'isZero', true],
 
             '-1 is non-zero' => [-1, 'isNonZero', true],
-            '19 is non-zero' => [19, 'isNonZero', true],
+            '1 is non-zero' => [1, 'isNonZero', true],
             '0 is not non-zero' => [0, 'isNonZero', false],
             '"0" is not non-zero' => ['0', 'isNonZero', false],
             '"0.00" is not non-zero' => ['0.00', 'isNonZero', false],
             '"-0" is not non-zero' => ['-0', 'isNonZero', false],
             '"-0.00" is not non-zero' => ['-0.00', 'isNonZero', false],
 
-            '42 is positive' => [42, 'isPositive', true],
-            '-11 is not positive' => [-11, 'isPositive', false],
+            '1 is positive' => [1, 'isPositive', true],
+            '-1 is not positive' => [-1, 'isPositive', false],
             '0 is positive' => [0, 'isPositive', true],
 
-            '-12 is negative' => [-12, 'isNegative', true],
-            '51 is not negative' => [51, 'isNegative', false],
+            '-1 is negative' => [-1, 'isNegative', true],
+            '1 is not negative' => [1, 'isNegative', false],
             '0 is not negative' => [0, 'isNegative', false],
         ];
     }
