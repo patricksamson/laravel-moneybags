@@ -116,6 +116,17 @@ class Money
         return $this->amount !== $operand->amount;
     }
 
+    public function round(int $precision = 0)
+    {
+        if (strpos($this->amount, '.') !== false) {
+            if ($this->amount[0] != '-') {
+                return $this->newInstance(bcadd($this->amount, '0.' . str_repeat('0', $precision) . '5', $precision));
+            }
+            return $this->newInstance(bcsub($this->amount, '0.' . str_repeat('0', $precision) . '5', $precision));
+        }
+        return $this->newInstance($this->amount);
+    }
+
     public function clone(): self
     {
         return clone $this;
