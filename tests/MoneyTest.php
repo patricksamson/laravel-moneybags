@@ -249,7 +249,7 @@ class MoneyTest extends TestCase
             'Max int is positive' => [PHP_INT_MAX, 'isPositive', true],
             'Min int is not positive' => [PHP_INT_MIN, 'isPositive', false],
             'Max float is positive' => [PHP_FLOAT_MAX, 'isPositive', true],
-            'Min float is not positive' => [PHP_FLOAT_MIN, 'isPositive', false],
+            'Min float is not positive' => [-PHP_FLOAT_MAX, 'isPositive', false],
 
             '-1 is negative' => [-1, 'isNegative', true],
             '1 is not negative' => [1, 'isNegative', false],
@@ -257,7 +257,7 @@ class MoneyTest extends TestCase
             'Max int is not negative' => [PHP_INT_MAX, 'isNegative', false],
             'Min int is negative' => [PHP_INT_MIN, 'isNegative', true],
             'Max float is not negative' => [PHP_FLOAT_MAX, 'isNegative', false],
-            'Min float is negative' => [PHP_FLOAT_MIN, 'isNegative', true],
+            'Min float is negative' => [-PHP_FLOAT_MAX, 'isNegative', true],
         ];
     }
 
@@ -360,5 +360,6 @@ class MoneyTest extends TestCase
     {
         $money = new Money(100);
         $this->assertEquals(115, $money->multiplyBy('1.14975')->inCents());
+        $this->assertEquals(114, $money->multiplyBy('1.14975', round:false)->inCents());
     }
 }
