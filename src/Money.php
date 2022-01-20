@@ -4,7 +4,7 @@ namespace PatrickSamson\LaravelMoneybags;
 
 class Money
 {
-    public const DEFAULT_SCALE = 4;
+    public const DEFAULT_SCALE = 6;
 
     /**
      * The amount, in cents.
@@ -105,32 +105,32 @@ class Money
 
     public function isZero(): bool
     {
-        return bccomp($this->amount, 0) === 0;
+        return bccomp($this->amount, 0, self::DEFAULT_SCALE) === 0;
     }
 
     public function isNonZero(): bool
     {
-        return bccomp($this->amount, 0) !== 0;
+        return bccomp($this->amount, 0, self::DEFAULT_SCALE) !== 0;
     }
 
     public function isPositive(): bool
     {
-        return bccomp($this->amount, 0) >= 0;
+        return bccomp($this->amount, 0, self::DEFAULT_SCALE) >= 0;
     }
 
     public function isNegative(): bool
     {
-        return bccomp($this->amount, 0) < 0;
+        return bccomp($this->amount, 0, self::DEFAULT_SCALE) < 0;
     }
 
     public function isEqualTo(Money $operand): bool
     {
-        return $this->amount === $operand->amount;
+        return bccomp($this->amount, $operand->amount, self::DEFAULT_SCALE) === 0;
     }
 
     public function isNotEqualTo(Money $operand): bool
     {
-        return $this->amount !== $operand->amount;
+        return bccomp($this->amount, $operand->amount, self::DEFAULT_SCALE) !== 0;
     }
 
     public function round(int $precision = 0)
