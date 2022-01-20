@@ -238,7 +238,7 @@ class MoneyTest extends TestCase
             '"-0.00" is zero' => ['-0.00', true],
             'Max float is not zero' => [PHP_FLOAT_MAX, false],
             // Technically not zero, but smaller than our scale : 2.2250738585072014E-308
-            'Min float is not zero' => [PHP_FLOAT_MIN, true],
+            'Near-zero float is zero' => [PHP_FLOAT_MIN, true],
         ];
     }
 
@@ -270,6 +270,8 @@ class MoneyTest extends TestCase
             'Min int is not positive' => [PHP_INT_MIN, false],
             'Max float is positive' => [PHP_FLOAT_MAX, true],
             'Min float is not positive' => [-PHP_FLOAT_MAX, false],
+            'Near-zero positive float is positive' => [PHP_FLOAT_MIN, true],
+            'Near-zero negative float is positive' => [-PHP_FLOAT_MIN, true],
         ];
     }
 
