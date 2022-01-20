@@ -43,6 +43,7 @@ class Money
             // Correctly parse floats containing exponential numbers.
             $amount = number_format($amount, self::DEFAULT_SCALE, '.', '');
         }
+
         return new self(bcmul((string) $amount, 100));
     }
 
