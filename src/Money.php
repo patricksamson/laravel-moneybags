@@ -95,7 +95,7 @@ class Money
 
     public function absolute(): self
     {
-        return str_starts_with($this->amount, '-') ? $this->invertSign() : $this->clone();
+        return str_starts_with($this->amount, '-') ? $this->invertSign() : $this->copy();
     }
 
     public function invertSign(): self
@@ -138,7 +138,7 @@ class Money
         return $this->newInstance($this->bcRound($this->amount, $precision));
     }
 
-    public function clone(): self
+    public function copy(): self
     {
         return clone $this;
     }

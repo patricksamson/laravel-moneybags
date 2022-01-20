@@ -310,16 +310,12 @@ class MoneyTest extends TestCase
     /**
      * @test
      */
-    public function testClone()
+    public function testCopyDoesNotReferenceTheSameObject()
     {
         $original = new Money(123);
-        $clone = $original->clone();
+        $copy = $original->copy();
 
-        $this->assertEquals(123, $original->inCents());
-        $this->assertEquals(123, $clone->inCents());
-
-        $original->multiplyBy(2);
-        $this->assertEquals(123, $clone->inCents());
+        $this->assertNotSame($original, $copy);
     }
 
     /**
