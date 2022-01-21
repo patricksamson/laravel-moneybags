@@ -300,7 +300,7 @@ class MoneyTest extends TestCase
             [1, 0],
             [PHP_FLOAT_MIN, PHP_FLOAT_MIN, 0],
             [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
-            [1, '0.00']
+            [1, '0.00'],
         ];
     }
 
