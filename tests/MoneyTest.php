@@ -181,6 +181,7 @@ class MoneyTest extends TestCase
             [PHP_FLOAT_MIN, PHP_FLOAT_MIN, 0],
             [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
             [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+            [0.00, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
         ];
     }
 
@@ -208,6 +209,7 @@ class MoneyTest extends TestCase
             [PHP_FLOAT_MIN, PHP_FLOAT_MIN, 0],
             [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
             [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+            [0.00, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
         ];
     }
 
