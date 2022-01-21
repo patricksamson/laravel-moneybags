@@ -391,8 +391,10 @@ class MoneyTest extends TestCase
             // Technically not zero, but smaller than our scale : 2.2250738585072014E-308
             'Near-zero float is zero' => [PHP_FLOAT_MIN, true],
             'Near-zero negative float is zero' => [PHP_FLOAT_MIN, true],
-            'Near-zero string is zero' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
-            'Near-zero negative string is zero' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
+            'Near-zero string is zero' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true], // Rounded to 0
+            'Near-zero negative string is zero' => [bcdiv(-1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true], // Rounded to 0
+            'Rounded up near-zero string is not zero' => [bcdiv(5, 10 ** (Money::DEFAULT_SCALE), Money::DEFAULT_SCALE), false],
+            'Rounded down near-zero negative string is zero' => [bcdiv(-5, 10 ** (Money::DEFAULT_SCALE), Money::DEFAULT_SCALE), false],
         ];
     }
 
@@ -426,8 +428,10 @@ class MoneyTest extends TestCase
             'Min float is not positive' => [-PHP_FLOAT_MAX, false],
             'Near-zero positive float is positive' => [PHP_FLOAT_MIN, true],
             'Near-zero negative float is positive' => [-PHP_FLOAT_MIN, true],
-            'Near-zero string is positive' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
-            'Near-zero negative string is positive' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
+            'Near-zero string is positive' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true], // Rounded to 0
+            'Near-zero negative string is positive' => [bcdiv(-1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true], // Rounded to 0
+            'Rounded up near-zero string is positive' => [bcdiv(5, 10 ** (Money::DEFAULT_SCALE), Money::DEFAULT_SCALE), true],
+            'Rounded down near-zero negative string is not positive' => [bcdiv(-5, 10 ** (Money::DEFAULT_SCALE), Money::DEFAULT_SCALE), false],
         ];
     }
 
