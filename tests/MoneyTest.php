@@ -245,6 +245,10 @@ class MoneyTest extends TestCase
             [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
             [1, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
             [1.00, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+
+            // Rounding tests
+            [100, 1 / 3, 33],
+            [100, 2 / 3, 67],
         ];
     }
 
@@ -275,6 +279,7 @@ class MoneyTest extends TestCase
             [1.00, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 10 ** (Money::DEFAULT_SCALE + 1)],
 
             // Rounding tests
+            [1, 3, 0],
             [2, 3, 1],
         ];
     }
