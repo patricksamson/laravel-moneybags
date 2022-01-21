@@ -16,7 +16,7 @@ class Money
         if (is_float($amount)) {
             $amount = static::parseFloat($amount);
         }
-        $this->amount = (string) $amount;
+        $this->amount = $amount;
     }
 
     public function amount(): string
@@ -45,7 +45,7 @@ class Money
             $amount = static::parseFloat($amount);
         }
 
-        return new self(bcmul((string) $amount, 100));
+        return new self(bcmul($amount, 100));
     }
 
     public static function zero(): self
