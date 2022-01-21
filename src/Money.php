@@ -14,8 +14,7 @@ class Money
     public function __construct(int|float|string $amount = 0)
     {
         if (is_float($amount)) {
-            // Correctly parse floats containing exponential numbers.
-            $amount = number_format($amount, self::DEFAULT_SCALE, '.', '');
+            $amount = static::parseFloat($amount);
         }
         $this->amount = (string) $amount;
     }
@@ -43,8 +42,7 @@ class Money
     public static function fromDollars(int|float|string $amount): self
     {
         if (is_float($amount)) {
-            // Correctly parse floats containing exponential numbers.
-            $amount = number_format($amount, self::DEFAULT_SCALE, '.', '');
+            $amount = static::parseFloat($amount);
         }
 
         return new self(bcmul((string) $amount, 100));
@@ -72,8 +70,12 @@ class Money
         return $this->newInstance($round ? $this->bcRound($result) : $result);
     }
 
-    public function multiplyBy(string $multiplier, bool $round = true): self
+    public function multiplyBy(int|float|string $multiplier, bool $round = true): self
     {
+        if (is_float($multiplier)) {
+            $multiplier = static::parseFloat($multiplier);
+        }
+
         $result = bcmul($this->amount, $multiplier, self::DEFAULT_SCALE);
 
         return $this->newInstance($round ? $this->bcRound($result) : $result);
@@ -86,8 +88,12 @@ class Money
         return $this->newInstance($round ? $this->bcRound($result) : $result);
     }
 
-    public function divideBy(string $divisor, bool $round = true): self
+    public function divideBy(int|float|string $divisor, bool $round = true): self
     {
+        if (is_float($divisor)) {
+            $divisor = static::parseFloat($divisor);
+        }
+
         $result = bcdiv($this->amount, $divisor, self::DEFAULT_SCALE);
 
         return $this->newInstance($round ? $this->bcRound($result) : $result);
@@ -141,6 +147,12 @@ class Money
     public function copy(): self
     {
         return clone $this;
+    }
+
+    private static function parseFloat(float $amount): string
+    {
+        // Correctly parse floats containing exponential numbers.
+        return number_format($amount, self::DEFAULT_SCALE, '.', '');
     }
 
     private static function bcRound(string $amount, int $precision = 0): string

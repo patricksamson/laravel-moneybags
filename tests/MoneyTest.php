@@ -2,11 +2,15 @@
 
 namespace PatrickSamson\LaravelMoneybags\Tests;
 
+use DivisionByZeroError;
 use PatrickSamson\LaravelMoneybags\Money;
+use PatrickSamson\LaravelMoneybags\Tests\Concerns\AssertsMoney;
 use PHPUnit\Framework\TestCase;
 
 class MoneyTest extends TestCase
 {
+    use AssertsMoney;
+
     private \Faker\Generator $faker;
 
     public function setUp(): void
@@ -210,6 +214,93 @@ class MoneyTest extends TestCase
             [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
             [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
             [0.00, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider providesMultiplicationScenarios
+     */
+    public function testMultiplication(int|float|string $amount, int|float|string $operand, int $expected)
+    {
+        $money = new Money($amount);
+        $operandMoney = new Money($operand);
+
+        $this->assertEquals($expected, $money->multiplyBy($operand)->inCents());
+        $this->assertEquals($expected, $money->multiplyByMoney($operandMoney)->inCents());
+        $this->assertMoneyEqualsMoney($money->multiplyBy($operand), $money->multiplyByMoney($operandMoney));
+    }
+
+    public function providesMultiplicationScenarios()
+    {
+        return [
+            [0, 0, 0],
+            [1, 0, 0],
+            [1, 1, 1],
+            [1, -1, -1],
+            [-1, -1, 1],
+            //[PHP_INT_MAX, -PHP_INT_MIN, -1], // TODO Too large for inCents()
+            //[PHP_FLOAT_MAX, PHP_FLOAT_MAX, 0],
+            [PHP_FLOAT_MIN, PHP_FLOAT_MIN, 0],
+            [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
+            [1, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+            [1.00, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider providesDivisionScenarios
+     */
+    public function testDivision(int|float|string $amount, int|float|string $operand, int $expected)
+    {
+        $money = new Money($amount);
+        $operandMoney = new Money($operand);
+
+        $this->assertEquals($expected, $money->divideBy($operand)->inCents());
+        $this->assertEquals($expected, $money->divideByMoney($operandMoney)->inCents());
+        $this->assertMoneyEqualsMoney($money->divideBy($operand), $money->divideByMoney($operandMoney));
+    }
+
+    public function providesDivisionScenarios()
+    {
+        return [
+            [0, 1, 0],
+            [1, 1, 1],
+            [1, -1, -1],
+            [-1, -1, 1],
+            [PHP_INT_MAX, -PHP_INT_MIN, 1],
+            [PHP_FLOAT_MAX, PHP_FLOAT_MAX, 1],
+            [1, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 10 ** (Money::DEFAULT_SCALE + 1)],
+            [1.00, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 10 ** (Money::DEFAULT_SCALE + 1)],
+
+            // Rounding tests
+            [2, 3, 1],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider providesDivisionByZeroScenarios
+     */
+    public function testDivisionByZero(int|float|string $amount, int|float|string $operand)
+    {
+        $money = new Money($amount);
+        $operandMoney = new Money($operand);
+
+        $this->expectException(DivisionByZeroError::class);
+        $money->divideBy($operand);
+        $money->divideByMoney($operandMoney);
+    }
+
+    public function providesDivisionByZeroScenarios()
+    {
+        return [
+            [0, 0],
+            [1, 0],
+            [PHP_FLOAT_MIN, PHP_FLOAT_MIN, 0],
+            [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
+            [1, '0.00']
         ];
     }
 
