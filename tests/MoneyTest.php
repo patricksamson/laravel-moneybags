@@ -562,6 +562,15 @@ class MoneyTest extends TestCase
 
     /**
      * @test
+     */
+    public function testDefaultRoundPrecision()
+    {
+        $money = new Money(12.34);
+        $this->assertEquals('12', $money->round()->amount());
+    }
+
+    /**
+     * @test
      * @dataProvider providesRoundingPrecisonScenarios
      */
     public function testRoundingPrecison(string $amount, int $precision, string $expected)
