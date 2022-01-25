@@ -171,7 +171,7 @@ class MoneyTest extends TestCase
         $money = new Money($amount);
         $operandMoney = new Money($operand);
 
-        $this->assertEquals($expected, $money->add($operandMoney)->inCents());
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->add($operandMoney));
     }
 
     public function providesAdditionScenarios()
@@ -198,7 +198,7 @@ class MoneyTest extends TestCase
         $money = new Money($amount);
         $operandMoney = new Money($operand);
 
-        $this->assertEquals($expected, $money->subtract($operandMoney)->inCents());
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->subtract($operandMoney));
     }
 
     public function providesSubscractionScenarios()
