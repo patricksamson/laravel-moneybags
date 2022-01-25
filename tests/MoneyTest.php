@@ -226,8 +226,8 @@ class MoneyTest extends TestCase
         $money = new Money($amount);
         $operandMoney = new Money($operand);
 
-        $this->assertEquals($expected, $money->multiplyBy($operand)->inCents());
-        $this->assertEquals($expected, $money->multiplyByMoney($operandMoney)->inCents());
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->multiplyBy($operand));
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->multiplyByMoney($operandMoney));
         $this->assertMoneyEqualsMoney($money->multiplyBy($operand), $money->multiplyByMoney($operandMoney));
     }
 
@@ -261,8 +261,8 @@ class MoneyTest extends TestCase
         $money = new Money($amount);
         $operandMoney = new Money($operand);
 
-        $this->assertEquals($expected, $money->divideBy($operand)->inCents());
-        $this->assertEquals($expected, $money->divideByMoney($operandMoney)->inCents());
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->divideBy($operand));
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->divideByMoney($operandMoney));
         $this->assertMoneyEqualsMoney($money->divideBy($operand), $money->divideByMoney($operandMoney));
     }
 
@@ -317,7 +317,7 @@ class MoneyTest extends TestCase
     {
         $money = new Money($amount);
 
-        $this->assertEquals($expected, $money->absolute()->inCents());
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->absolute());
     }
 
     public function providesAbsoluteScenarios()
@@ -344,7 +344,7 @@ class MoneyTest extends TestCase
     {
         $money = new Money($amount);
 
-        $this->assertEquals($expected, $money->invertSign()->inCents());
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->invertSign());
     }
 
     public function providesInvertSignScenarios()
