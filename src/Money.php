@@ -157,7 +157,6 @@ class Money
 
     private static function bcRound(string $amount, int $precision = 0): string
     {
-        $precision = max($precision, 0); // Prevent negative precision.
         if (str_contains($amount, '.')) {
             if (! str_starts_with($amount, '-')) {
                 return bcadd($amount, '0.' . str_repeat('0', $precision) . '5', $precision);

@@ -599,8 +599,15 @@ class MoneyTest extends TestCase
             'precision is 2 negative' => ['-12.34567', 2, '-12.35'],
             'precision is 3 negative' => ['-12.34567', 3, '-12.346'],
             'appends zeroes on higher precision' => ['12.34', 5, '12.34000'],
-
-            'min precision is zero' => ['12.34', -1, '12'],
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function testInDollars()
+    {
+        $money = new Money('1234.56');
+        $this->assertEquals('12.35', $money->inDollars());
     }
 }
