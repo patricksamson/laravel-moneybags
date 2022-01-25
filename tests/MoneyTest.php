@@ -486,6 +486,7 @@ class MoneyTest extends TestCase
             [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
 
             // Direct string comparison
+            ['12.34', '12.34000', true],
             ['0', '0', true],
             ['0', '0.00', true],
             ['0', '-0.00', true],
@@ -549,10 +550,45 @@ class MoneyTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     */
     public function testMultiplyByPrecision()
     {
         $money = new Money(100);
         $this->assertEquals(115, $money->multiplyBy('1.14975')->inCents());
         $this->assertEquals(114, $money->multiplyBy('1.14975', round:false)->inCents());
+    }
+
+    /**
+     * @test
+     * @dataProvider providesRoundingPrecisonScenarios
+     */
+    public function testRoundingPrecison(string $amount, int $precision, string $expected)
+    {
+        $money = new Money($amount);
+
+        $this->assertEquals($expected, $money->round($precision)->amount());
+    }
+
+    public function providesRoundingPrecisonScenarios()
+    {
+        return [
+            // Zero precision
+            'do not round integers' => ['12', 0, '12'],
+            'round down' => ['12.4', 0, '12'],
+            'round up' => ['12.5', 0, '13'],
+            'do not round negative integers' => ['-12', 0, '-12'],
+            'round up negative' => ['-12.4', 0, '-12'],
+            'round down negative' => ['-12.5', 0, '-13'],
+
+            // Larger precision
+            'precision is 1' => ['12.34567', 1, '12.3'],
+            'precision is 2' => ['12.34567', 2, '12.35'],
+            'precision is 3' => ['12.34567', 3, '12.346'],
+            'appends zeroes on higher precision' => ['12.34', 5, '12.34000'],
+
+            'min precision is zero' => ['12.34', -1, '12'],
+        ];
     }
 }
