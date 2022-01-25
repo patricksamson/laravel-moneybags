@@ -586,6 +586,9 @@ class MoneyTest extends TestCase
             'precision is 1' => ['12.34567', 1, '12.3'],
             'precision is 2' => ['12.34567', 2, '12.35'],
             'precision is 3' => ['12.34567', 3, '12.346'],
+            'precision is 1 negative' => ['-12.34567', 1, '-12.3'],
+            'precision is 2 negative' => ['-12.34567', 2, '-12.35'],
+            'precision is 3 negative' => ['-12.34567', 3, '-12.346'],
             'appends zeroes on higher precision' => ['12.34', 5, '12.34000'],
 
             'min precision is zero' => ['12.34', -1, '12'],
