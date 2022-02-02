@@ -2,11 +2,15 @@
 
 namespace PatrickSamson\LaravelMoneybags\Tests;
 
+use DivisionByZeroError;
 use PatrickSamson\LaravelMoneybags\Money;
+use PatrickSamson\LaravelMoneybags\Tests\Concerns\AssertsMoney;
 use PHPUnit\Framework\TestCase;
 
 class MoneyTest extends TestCase
 {
+    use AssertsMoney;
+
     private \Faker\Generator $faker;
 
     public function setUp(): void
@@ -69,6 +73,10 @@ class MoneyTest extends TestCase
             [0, '0.00'],
             [0, '-0.00'],
             [12345, '12345.67'],
+
+            // Precision (truncated to `int`)
+            [12, 12.345678901234567890],
+            [12, '12.345678901234567890'],
         ];
     }
 
@@ -105,6 +113,10 @@ class MoneyTest extends TestCase
             [0, '0.00'],
             [0, '-0.00'],
             [12345, '12345.67'],
+
+            // Precision (truncated to `int`)
+            [12, 12.345678901234567890],
+            [12, '12.345678901234567890'],
         ];
     }
 
@@ -141,6 +153,159 @@ class MoneyTest extends TestCase
             [0, '0.00'],
             [0, '-0.00'],
             [1234567, '12345.67'],
+
+            // Precision (truncated to `int`)
+            [1234, 12.345678901234567890],
+            [1234, '12.345678901234567890'],
+            [PHP_INT_MAX, PHP_INT_MAX],
+            //[1234, PHP_FLOAT_MAX], // TODO inCents() casts to int...
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider providesAdditionScenarios
+     */
+    public function testAdd(int|float|string $amount, int|float|string $operand, int $expected)
+    {
+        $money = new Money($amount);
+        $operandMoney = new Money($operand);
+
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->add($operandMoney));
+    }
+
+    public function providesAdditionScenarios()
+    {
+        return [
+            [0, 0, 0],
+            [1, -1, 0],
+            [-1, -1, -2],
+            [PHP_INT_MAX, PHP_INT_MIN, -1],
+            [PHP_FLOAT_MAX, -PHP_FLOAT_MAX, 0],
+            [PHP_FLOAT_MIN, PHP_FLOAT_MIN, 0],
+            [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
+            [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+            [0.00, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider providesSubscractionScenarios
+     */
+    public function testSubtract(int|float|string $amount, int|float|string $operand, int $expected)
+    {
+        $money = new Money($amount);
+        $operandMoney = new Money($operand);
+
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->subtract($operandMoney));
+    }
+
+    public function providesSubscractionScenarios()
+    {
+        return [
+            [0, 0, 0],
+            [1, 1, 0],
+            [1, -1, 2],
+            [-1, -1, 0],
+            [PHP_INT_MAX, -PHP_INT_MIN, -1],
+            [PHP_FLOAT_MAX, PHP_FLOAT_MAX, 0],
+            [PHP_FLOAT_MIN, PHP_FLOAT_MIN, 0],
+            [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
+            [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+            [0.00, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider providesMultiplicationScenarios
+     */
+    public function testMultiplication(int|float|string $amount, int|float|string $operand, int $expected)
+    {
+        $money = new Money($amount);
+        $operandMoney = new Money($operand);
+
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->multiplyBy($operand));
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->multiplyByMoney($operandMoney));
+        $this->assertMoneyEqualsMoney($money->multiplyBy($operand), $money->multiplyByMoney($operandMoney));
+    }
+
+    public function providesMultiplicationScenarios()
+    {
+        return [
+            [0, 0, 0],
+            [1, 0, 0],
+            [1, 1, 1],
+            [1, -1, -1],
+            [-1, -1, 1],
+            //[PHP_INT_MAX, -PHP_INT_MIN, -1], // TODO Too large for inCents()
+            //[PHP_FLOAT_MAX, PHP_FLOAT_MAX, 0],
+            [PHP_FLOAT_MIN, PHP_FLOAT_MIN, 0],
+            [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
+            [1, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+            [1.00, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 0],
+
+            // Rounding tests
+            [100, 1 / 3, 33],
+            [100, 2 / 3, 67],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider providesDivisionScenarios
+     */
+    public function testDivision(int|float|string $amount, int|float|string $operand, int $expected)
+    {
+        $money = new Money($amount);
+        $operandMoney = new Money($operand);
+
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->divideBy($operand));
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->divideByMoney($operandMoney));
+        $this->assertMoneyEqualsMoney($money->divideBy($operand), $money->divideByMoney($operandMoney));
+    }
+
+    public function providesDivisionScenarios()
+    {
+        return [
+            [0, 1, 0],
+            [1, 1, 1],
+            [1, -1, -1],
+            [-1, -1, 1],
+            [PHP_INT_MAX, -PHP_INT_MIN, 1],
+            [PHP_FLOAT_MAX, PHP_FLOAT_MAX, 1],
+            [1, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 10 ** (Money::DEFAULT_SCALE + 1)],
+            [1.00, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), 10 ** (Money::DEFAULT_SCALE + 1)],
+
+            // Rounding tests
+            [1, 3, 0],
+            [2, 3, 1],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider providesDivisionByZeroScenarios
+     */
+    public function testDivisionByZero(int|float|string $amount, int|float|string $operand)
+    {
+        $money = new Money($amount);
+        $operandMoney = new Money($operand);
+
+        $this->expectException(DivisionByZeroError::class);
+        $money->divideBy($operand);
+        $money->divideByMoney($operandMoney);
+    }
+
+    public function providesDivisionByZeroScenarios()
+    {
+        return [
+            [0, 0],
+            [1, 0],
+            [PHP_FLOAT_MIN, PHP_FLOAT_MIN, 0],
+            [PHP_FLOAT_MIN, -PHP_FLOAT_MIN, 0],
+            [1, '0.00'],
         ];
     }
 
@@ -152,7 +317,7 @@ class MoneyTest extends TestCase
     {
         $money = new Money($amount);
 
-        $this->assertEquals($expected, $money->absolute()->inCents());
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->absolute());
     }
 
     public function providesAbsoluteScenarios()
@@ -179,7 +344,7 @@ class MoneyTest extends TestCase
     {
         $money = new Money($amount);
 
-        $this->assertEquals($expected, $money->invertSign()->inCents());
+        $this->assertMoneyEqualsMoney(new Money($expected), $money->invertSign());
     }
 
     public function providesInvertSignScenarios()
@@ -200,42 +365,73 @@ class MoneyTest extends TestCase
 
     /**
      * @test
-     * @dataProvider providesComputedAttributeScenarios
-     *
-     * @param mixed $expected
+     * @dataProvider providesIsZeroScenarios
      */
-    public function testHasComputedAttributes(int|string $amount, string $attribute, $expected)
+    public function testIsZeroAndNonZero(int|float|string $amount, bool $expectedIsZero)
     {
         $money = new Money($amount);
-        $this->assertEquals($expected, $money->$attribute());
+        $this->assertEquals($expectedIsZero, $money->isZero());
+        $this->assertEquals(! $expectedIsZero, $money->isNonZero());
     }
 
-    public function providesComputedAttributeScenarios()
+    public function providesIsZeroScenarios()
     {
         return [
-            '0 is zero' => [0, 'isZero', true],
-            '10 is not zero' => [10, 'isZero', false],
-            '-10 is not zero' => [-10, 'isZero', false],
-            '"0" is zero' => ['0', 'isZero', true],
-            '"0.00" is zero' => ['0.00', 'isZero', true],
-            '"-0" is zero' => ['-0', 'isZero', true],
-            '"-0.00" is zero' => ['-0.00', 'isZero', true],
+            '0 is zero' => [0, true],
+            '1 is not zero' => [1, false],
+            '-1 is not zero' => [-1, false],
+            '0.00000 is zero' => [0.00000, true],
+            '0.00001 is not zero' => [0.00001, false],
+            '-0.0001 is not zero' => [-0.00001, false],
+            '"0" is zero' => ['0', true],
+            '"0.00" is zero' => ['0.00', true],
+            '"-0" is zero' => ['-0', true],
+            '"-0.00" is zero' => ['-0.00', true],
+            'Max float is not zero' => [PHP_FLOAT_MAX, false],
+            // Technically not zero, but smaller than our scale : 2.2250738585072014E-308
+            'Near-zero float is zero' => [PHP_FLOAT_MIN, true],
+            'Near-zero negative float is zero' => [PHP_FLOAT_MIN, true],
+            'Near-zero string is zero' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true], // Rounded to 0
+            'Near-zero negative string is zero' => [bcdiv(-1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true], // Rounded to 0
+            'Rounded up near-zero string is not zero' => [bcdiv(5, 10 ** (Money::DEFAULT_SCALE), Money::DEFAULT_SCALE), false],
+            'Rounded down near-zero negative string is zero' => [bcdiv(-5, 10 ** (Money::DEFAULT_SCALE), Money::DEFAULT_SCALE), false],
+        ];
+    }
 
-            '-1 is non-zero' => [-1, 'isNonZero', true],
-            '19 is non-zero' => [19, 'isNonZero', true],
-            '0 is not non-zero' => [0, 'isNonZero', false],
-            '"0" is not non-zero' => ['0', 'isNonZero', false],
-            '"0.00" is not non-zero' => ['0.00', 'isNonZero', false],
-            '"-0" is not non-zero' => ['-0', 'isNonZero', false],
-            '"-0.00" is not non-zero' => ['-0.00', 'isNonZero', false],
+    /**
+     * @test
+     * @dataProvider providesIsPositiveScenarios
+     */
+    public function testIsPositive(int|float|string $amount, bool $expectedIsPositive)
+    {
+        $money = new Money($amount);
+        $this->assertEquals($expectedIsPositive, $money->isPositive());
+        $this->assertEquals(! $expectedIsPositive, $money->isNegative());
+    }
 
-            '42 is positive' => [42, 'isPositive', true],
-            '-11 is not positive' => [-11, 'isPositive', false],
-            '0 is positive' => [0, 'isPositive', true],
-
-            '-12 is negative' => [-12, 'isNegative', true],
-            '51 is not negative' => [51, 'isNegative', false],
-            '0 is not negative' => [0, 'isNegative', false],
+    public function providesIsPositiveScenarios()
+    {
+        return [
+            '1 is positive' => [1, true],
+            '-1 is not positive' => [-1, false],
+            '0 is positive' => [0, true],
+            '0.00000 is positive' => [0.00000, true],
+            '0.00001 is positive' => [0.00001, true],
+            '-0.0001 is not positive' => [-0.00001, false],
+            '"0" is positive' => ['0', true],
+            '"0.00" is positive' => ['0.00', true],
+            '"-0" is positive' => ['-0', true],
+            '"-0.00" is positive' => ['-0.00', true],
+            'Max int is positive' => [PHP_INT_MAX, true],
+            'Min int is not positive' => [PHP_INT_MIN, false],
+            'Max float is positive' => [PHP_FLOAT_MAX, true],
+            'Min float is not positive' => [-PHP_FLOAT_MAX, false],
+            'Near-zero positive float is positive' => [PHP_FLOAT_MIN, true],
+            'Near-zero negative float is positive' => [-PHP_FLOAT_MIN, true],
+            'Near-zero string is positive' => [bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true], // Rounded to 0
+            'Near-zero negative string is positive' => [bcdiv(-1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true], // Rounded to 0
+            'Rounded up near-zero string is positive' => [bcdiv(5, 10 ** (Money::DEFAULT_SCALE), Money::DEFAULT_SCALE), true],
+            'Rounded down near-zero negative string is not positive' => [bcdiv(-5, 10 ** (Money::DEFAULT_SCALE), Money::DEFAULT_SCALE), false],
         ];
     }
 
@@ -245,7 +441,7 @@ class MoneyTest extends TestCase
      *
      * @param mixed $expected
      */
-    public function testEqualityComparison(int|string $amount, int|string $operandAmount, bool $expectEquals)
+    public function testEqualityComparison(int|float|string $amount, int|float|string $operandAmount, bool $expectEquals)
     {
         $money = new Money($amount);
         $operand = new Money($operandAmount);
@@ -261,28 +457,51 @@ class MoneyTest extends TestCase
     public function providesEqualityComparisonScenarios()
     {
         return [
-            [0, 0, true],
-            [0, '0', true],
+            // Type checks
             [1234, 1234, true],
-            [1234, '1234', true],
             [-1234, -1234, true],
+            [1234, 1234.00, true],
+            [-1234, -1234.00, true],
+            [1234, '1234', true],
             [-1234, '-1234', true],
+            [1234, '1234.00', true],
+            [-1234, '-1234.00', true],
 
+            // Different signs are not equal
             [1234, -1234, false],
             [1234, '-1234', false],
+
+            // Zero edge cases
+            [0, 0, true],
+            [0, 0.00, true],
+            [0, '0', true],
+            [0, '0.00', true],
+            [0, -0, true],
+            [0, -0.00, true],
+            [0, '-0', true],
+            [0, '-0.00', true],
+            [0, PHP_FLOAT_MIN, true],
+            [0, -PHP_FLOAT_MIN, true],
+            [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
+            [0, bcdiv(1, 10 ** (Money::DEFAULT_SCALE + 1), Money::DEFAULT_SCALE + 1), true],
+
+            // Direct string comparison
+            ['12.34', '12.34000', true],
+            ['0', '0', true],
+            ['0', '0.00', true],
+            ['0', '-0.00', true],
         ];
     }
 
     /**
      * @test
      */
-    public function testClone()
+    public function testCopyDoesNotReferenceTheSameObject()
     {
         $original = new Money(123);
-        $clone = $original->clone();
+        $copy = $original->copy();
 
-        $this->assertEquals(123, $original->inCents());
-        $this->assertEquals(123, $clone->inCents());
+        $this->assertNotSame($original, $copy);
     }
 
     /**
@@ -327,7 +546,68 @@ class MoneyTest extends TestCase
 
         yield 'Division' => [
             'divideByMoney',
-            fn ($a, $b) => (int) floor($a / $b),
+            fn ($a, $b) => (int) round($a / $b),
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function testMultiplyByPrecision()
+    {
+        $money = new Money(100);
+        $this->assertEquals(115, $money->multiplyBy('1.14975')->inCents());
+        $this->assertEquals(114, $money->multiplyBy('1.14975', round:false)->inCents());
+    }
+
+    /**
+     * @test
+     */
+    public function testDefaultRoundPrecision()
+    {
+        $money = new Money(12.34);
+        $this->assertEquals('12', $money->round()->amount());
+    }
+
+    /**
+     * @test
+     * @dataProvider providesRoundingPrecisonScenarios
+     */
+    public function testRoundingPrecison(string $amount, int $precision, string $expected)
+    {
+        $money = new Money($amount);
+
+        $this->assertEquals($expected, $money->round($precision)->amount());
+    }
+
+    public function providesRoundingPrecisonScenarios()
+    {
+        return [
+            // Zero precision
+            'do not round integers' => ['12', 0, '12'],
+            'round down' => ['12.4', 0, '12'],
+            'round up' => ['12.5', 0, '13'],
+            'do not round negative integers' => ['-12', 0, '-12'],
+            'round up negative' => ['-12.4', 0, '-12'],
+            'round down negative' => ['-12.5', 0, '-13'],
+
+            // Larger precision
+            'precision is 1' => ['12.34567', 1, '12.3'],
+            'precision is 2' => ['12.34567', 2, '12.35'],
+            'precision is 3' => ['12.34567', 3, '12.346'],
+            'precision is 1 negative' => ['-12.34567', 1, '-12.3'],
+            'precision is 2 negative' => ['-12.34567', 2, '-12.35'],
+            'precision is 3 negative' => ['-12.34567', 3, '-12.346'],
+            'appends zeroes on higher precision' => ['12.34', 5, '12.34000'],
+        ];
+    }
+
+    /**
+     * @test
+     */
+    public function testInDollars()
+    {
+        $money = new Money('1234.56');
+        $this->assertEquals('12.35', $money->inDollars());
     }
 }
