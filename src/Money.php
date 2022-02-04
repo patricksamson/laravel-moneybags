@@ -172,6 +172,7 @@ class Money
     {
         return bccomp($this->amount, 0, self::DEFAULT_SCALE) !== 0;
     }
+
     /**
      * Determine if the amount is positive.
      */

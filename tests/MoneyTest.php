@@ -4,7 +4,7 @@ namespace PatrickSamson\LaravelMoneybags\Tests;
 
 use DivisionByZeroError;
 use PatrickSamson\LaravelMoneybags\Money;
-use PatrickSamson\LaravelMoneybags\Tests\Concerns\AssertsMoney;
+use PatrickSamson\LaravelMoneybags\Testing\AssertsMoney;
 use PHPUnit\Framework\TestCase;
 
 class MoneyTest extends TestCase

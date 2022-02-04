@@ -5,7 +5,7 @@ namespace PatrickSamson\LaravelMoneybags\Tests;
 use InvalidArgumentException;
 use PatrickSamson\LaravelMoneybags\Casts\MoneyFromCents;
 use PatrickSamson\LaravelMoneybags\Money;
-use PatrickSamson\LaravelMoneybags\Tests\Concerns\AssertsMoney;
+use PatrickSamson\LaravelMoneybags\Testing\AssertsMoney;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

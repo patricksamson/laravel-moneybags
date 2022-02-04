@@ -1,6 +1,6 @@
 <?php
 
-namespace PatrickSamson\LaravelMoneybags\Tests\Concerns;
+namespace PatrickSamson\LaravelMoneybags\Testing;
 
 use Mockery\Matcher\Closure as MockeryClosure;
 use PatrickSamson\LaravelMoneybags\Money;
