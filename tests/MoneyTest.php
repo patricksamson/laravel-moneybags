@@ -291,6 +291,10 @@ class MoneyTest extends TestCase
         $result = $money->divideBy(10 ** 32, round: false);
         $this->assertMoneyEqualsMoney(Money::zero(), $result);
         $this->assertEquals('0.000000', $result->amount());
+
+        $result = $money->divideByMoney(new Money((string) 10 ** 32), round: false);
+        $this->assertMoneyEqualsMoney(Money::zero(), $result);
+        $this->assertEquals('0.000000', $result->amount());
     }
 
     /**
