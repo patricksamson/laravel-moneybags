@@ -284,6 +284,15 @@ class MoneyTest extends TestCase
         ];
     }
 
+    public function testDivideByLargeNumbersLimitsPrecision()
+    {
+        $money = new Money(1);
+
+        $result = $money->divideBy(10 ** 32, round: false);
+        $this->assertMoneyEqualsMoney(Money::zero(), $result);
+        $this->assertEquals('0.000000', $result->amount());
+    }
+
     /**
      * @test
      * @dataProvider providesDivisionByZeroScenarios
@@ -604,10 +613,23 @@ class MoneyTest extends TestCase
 
     /**
      * @test
+     * @dataProvider providesInDollarsScenarios
      */
-    public function testInDollars()
+    public function testInDollars(string $amount, string $expected)
     {
-        $money = new Money('1234.56');
-        $this->assertEquals('12.35', $money->inDollars());
+        $money = new Money($amount);
+        $this->assertEquals($expected, $money->inDollars());
+    }
+
+    public function providesInDollarsScenarios()
+    {
+        return [
+            ['1234', '12.34'],
+            ['1234.49', '12.34'],
+            ['1234.56', '12.35'],
+
+            ['0', '0.00'],
+            ['-0', '0.00'],
+        ];
     }
 }

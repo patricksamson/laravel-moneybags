@@ -1,6 +1,6 @@
 <?php
 
-namespace PatrickSamson\LaravelMoneybags\Tests;
+namespace PatrickSamson\LaravelMoneybags\Tests\Casts;
 
 use InvalidArgumentException;
 use PatrickSamson\LaravelMoneybags\Casts\MoneyFromCents;
