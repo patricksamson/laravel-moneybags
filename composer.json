@@ -20,6 +20,7 @@
         "illuminate/contracts": "^8.73"
     },
     "require-dev": {
+        "codedungeon/phpunit-result-printer": "^0.31.0",
         "fakerphp/faker": "^1.17",
         "infection/infection": "^0.26.4",
         "orchestra/testbench": "^6.22",
