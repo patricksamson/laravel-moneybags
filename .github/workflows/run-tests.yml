@@ -103,4 +103,6 @@ jobs:
         run: composer install --classmap-authoritative
 
       - name: Infection
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         run: vendor/bin/infection --threads=4 --logger-github
