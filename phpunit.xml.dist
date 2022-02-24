@@ -6,7 +6,6 @@
     backupStaticAttributes="false"
     bootstrap="vendor/autoload.php"
     colors="true"
-    printerClass="Codedungeon\PHPUnitPrettyResultPrinter\Printer"
     convertErrorsToExceptions="true"
     convertNoticesToExceptions="true"
     convertWarningsToExceptions="true"
