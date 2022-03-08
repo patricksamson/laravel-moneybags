@@ -46,16 +46,6 @@
             "infection/extension-installer": true
         }
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "PatrickSamson\\LaravelMoneybags\\LaravelMoneybagsServiceProvider"
-            ],
-            "aliases": {
-                "LaravelMoneybags": "PatrickSamson\\LaravelMoneybags\\Facades\\LaravelMoneybags"
-            }
-        }
-    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
