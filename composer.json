@@ -24,7 +24,7 @@
         "infection/infection": "^0.26.4",
         "orchestra/testbench": "^6.23|^7.0",
         "phpunit/phpunit": "^9.5",
-        "vimeo/psalm": "^4.3"
+        "vimeo/psalm": "^5.1"
     },
     "autoload": {
         "psr-4": {
